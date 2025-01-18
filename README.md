@@ -101,5 +101,11 @@ La API proporciona las siguientes operaciones CRUD para gestionar los usuarios e
 - **`AppTest.java`**: Clase Test principal para probar la aplicación Spring Boot.
     ![test.png](imagenes/test.png)
 
-## Imagen de referencia del Index
+## Imagen prueba coon el `Index` creado
 ![index.png](imagenes/index.png)
+
+## Pruebas con `Postman`
+
+![post1.png](imagenes/post1.png)
+
+![post2.png](imagenes/post2.png)
