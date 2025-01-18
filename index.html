@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CRUD Usuarios</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f0f8ff;
+            margin: 0;
+            padding: 0;
+            color: #333;
+        }
+
+        h2, h3 {
+            text-align: center;
+            color: #0a74da;
+        }
+
+        .container {
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            padding: 20px;
+            gap: 20px;
+        }
+
+        /* Estilos de la tabla */
+        .usuarios-container {
+            flex: 1;
+            max-width: 65%;
+            overflow-x: auto;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+            background: #ffffff;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 0;
+            font-size: 14px;
+        }
+
+        table thead {
+            background-color: #0a74da;
+            color: #ffffff;
+        }
+
+        table thead th {
+            padding: 10px;
+            text-align: left;
+        }
+
+        table tbody tr {
+            border-bottom: 1px solid #ccc;
+            transition: background-color 0.3s ease;
+        }
+
+        table tbody tr:hover {
+            background-color: #f9f9f9;
+        }
+
+        table td {
+            padding: 10px;
+            text-align: left;
+        }
+
+        .actions button {
+            margin: 0 5px;
+            font-size: 12px;
+        }
+
+        /* Estilos del formulario */
+        form {
+            flex: 1;
+            background: #ffffff;
+            border-radius: 10px;
+            padding: 20px;
+            max-width: 30%;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+
+        form:hover {
+            transform: scale(1.03);
+        }
+
+        label {
+            display: block;
+            margin-bottom: 10px;
+            font-size: 14px;
+            color: #555;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 14px;
+            box-sizing: border-box;
+        }
+
+        button {
+            background-color: #0a74da;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #005bb5;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+            }
+
+            .usuarios-container, form {
+                max-width: 100%;
+            }
+
+            table thead {
+                display: none;
+            }
+
+            table, table tbody, table tr, table td {
+                display: block;
+                width: 100%;
+            }
+
+            table tr {
+                margin-bottom: 15px;
+                border: 1px solid #ccc;
+                border-radius: 10px;
+                padding: 10px;
+            }
+
+            table td {
+                text-align: right;
+                padding: 5px;
+                font-size: 14px;
+                position: relative;
+            }
+
+            table td::before {
+                content: attr(data-label);
+                position: absolute;
+                left: 10px;
+                font-weight: 600;
+                text-align: left;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h2>Gestión de Usuarios</h2>
+
+    <div class="container">
+        <!-- Tabla de Usuarios -->
+        <div class="usuarios-container">
+            <h3>Lista de Usuarios</h3>
+            <table id="usuariosTable">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nombre</th>
+                        <th>Identificación</th>
+                        <th>Dirección</th>
+                        <th>Teléfono</th>
+                        <th>Ciudad</th>
+                        <th>Estado</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+
+        <!-- Formulario de Usuario -->
+        <form id="usuarioForm">
+            <h3>Gestor de Usuarios</h3>
+            <input type="hidden" id="id" />
+            <label>Nombre: <input type="text" id="nombre" required></label>
+            <label>Identificación: <input type="text" id="identificacion" required></label>
+            <label>Dirección: <input type="text" id="direccion" required></label>
+            <label>Teléfono: <input type="text" id="telefono" required></label>
+            <label>Ciudad: <input type="text" id="ciudad" required></label>
+            <label>Estado: 
+                <select id="estado">
+                    <option value="true">Activo</option>
+                    <option value="false">Inactivo</option>
+                </select>
+            </label>
+            <button type="submit">Guardar Usuario</button>
+        </form>
+    </div>
+
+    <script>
+        const apiUrl = "http://localhost:8080/usuarios";
+
+        document.getElementById("usuarioForm").addEventListener("submit", function(event) {
+            event.preventDefault();
+            const id = document.getElementById("id").value;
+            const usuario = {
+                nombre: document.getElementById("nombre").value,
+                identificacion: document.getElementById("identificacion").value,
+                direccion: document.getElementById("direccion").value,
+                telefono: document.getElementById("telefono").value,
+                ciudad: document.getElementById("ciudad").value,
+                estado: document.getElementById("estado").value === "true"
+            };
+            if (id) {
+                actualizarUsuario(id, usuario);
+            } else {
+                crearUsuario(usuario);
+            }
+        });
+
+        function crearUsuario(usuario) {
+            fetch(apiUrl, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(usuario)
+            }).then(response => response.json())
+              .then(() => {
+                  alert("Usuario creado correctamente");
+                  listarUsuarios();
+              });
+        }
+
+        function actualizarUsuario(id, usuario) {
+            fetch(`${apiUrl}/${id}`, {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(usuario)
+            }).then(response => response.json())
+              .then(() => {
+                  alert("Usuario actualizado correctamente");
+                  listarUsuarios();
+                  document.getElementById("usuarioForm").reset();
+              });
+        }
+
+        function eliminarUsuario(id) {
+            fetch(`${apiUrl}/${id}`, { method: "DELETE" })
+                .then(() => {
+                    alert("Usuario eliminado");
+                    listarUsuarios();
+                });
+        }
+
+        function listarUsuarios() {
+            fetch(apiUrl)
+                .then(response => response.json())
+                .then(data => {
+                    const tbody = document.querySelector("#usuariosTable tbody");
+                    tbody.innerHTML = "";
+                    data.forEach(usuario => {
+                        const row = `
+                            <tr>
+                                <td data-label="ID">${usuario.id}</td>
+                                <td data-label="Nombre">${usuario.nombre}</td>
+                                <td data-label="Identificación">${usuario.identificacion}</td>
+                                <td data-label="Dirección">${usuario.direccion}</td>
+                                <td data-label="Teléfono">${usuario.telefono}</td>
+                                <td data-label="Ciudad">${usuario.ciudad}</td>
+                                <td data-label="Estado">${usuario.estado ? "Activo" : "Inactivo"}</td>
+                                <td class="actions">
+                                    <button onclick="cargarUsuario('${usuario.id}', '${usuario.nombre}', '${usuario.identificacion}', '${usuario.direccion}', '${usuario.telefono}', '${usuario.ciudad}', '${usuario.estado}')">Editar</button>
+                                    <button onclick="eliminarUsuario(${usuario.id})">Eliminar</button>
+                                </td>
+                            </tr>
+                        `;
+                        tbody.innerHTML += row;
+                    });
+                });
+        }
+
+        function cargarUsuario(id, nombre, identificacion, direccion, telefono, ciudad, estado) {
+            document.getElementById("id").value = id;
+            document.getElementById("nombre").value = nombre;
+            document.getElementById("identificacion").value = identificacion;
+            document.getElementById("direccion").value = direccion;
+            document.getElementById("telefono").value = telefono;
+            document.getElementById("ciudad").value = ciudad;
+            document.getElementById("estado").value = estado;
+        }
+
+        listarUsuarios();
+    </script>
+</body>
+</html>
