@@ -99,7 +99,7 @@ La API proporciona las siguientes operaciones CRUD para gestionar los usuarios e
 - **`service/UsuarioService.java`**: Servicio que contiene la lógica de negocio para manejar los usuarios.
 - **`controller/UsuarioController.java`**: Controlador que expone los endpoints de la API.
 - **`AppTest.java`**: Clase Test principal para probar la aplicación Spring Boot.
-    ![test.png](imagenes/test.png)
+![test.png](imagenes/test.png)
 
 ## Imagen prueba coon el `Index` creado
 ![index.png](imagenes/index.png)
